@@ -14,7 +14,7 @@ def login():
         identifier = request.form.get('identifier')
         password = request.form["password"]
 
-        conn = psycopg2.connect(os.getenv("lovefinderrrz"))
+        conn = psycopg2.connect(os.getenv("DATABASE_URL"))
         cursor = conn.cursor()
         cursor.execute(
             "SELECT Email, UserName, Password, Admin FROM users WHERE (Email=%s OR UserName=%s) AND Password=%s",
