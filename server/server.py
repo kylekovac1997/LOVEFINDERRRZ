@@ -1,5 +1,6 @@
-from flask import Flask, render_template, redirect, session, request
+import os
 import psycopg2
+from flask import Flask, render_template, redirect, session, request
 
 app = Flask(__name__)
 
@@ -13,13 +14,13 @@ def login():
         identifier = request.form.get('identifier')
         password = request.form["password"]
 
-        connect = psycopg2.connect("dbname=lovefinderrrz")
-        cursor = connect.cursor()
+        conn = psycopg2.connect(os.getenv("lovefinderrrz"))
+        cursor = conn.cursor()
         cursor.execute(
             "SELECT Email, UserName, Password, Admin FROM users WHERE (Email=%s OR UserName=%s) AND Password=%s",
             (identifier, identifier, password))
         user = cursor.fetchone()
-        connect.close()
+        conn.close()
         if user is not None:
             session['user'] = user
             if user[3]:
@@ -50,4 +51,4 @@ def admin(username):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
