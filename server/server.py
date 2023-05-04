@@ -16,13 +16,16 @@ def login():
         connect = psycopg2.connect("dbname=lovefinderrrz")
         cursor = connect.cursor()
         cursor.execute(
-            "SELECT Email, UserName, Password FROM users WHERE (Email=%s OR UserName=%s) AND Password=%s",
+            "SELECT Email, UserName, Password, Admin FROM users WHERE (Email=%s OR UserName=%s) AND Password=%s",
             (identifier, identifier, password))
         user = cursor.fetchone()
         connect.close()
         if user is not None:
             session['user'] = user
-            return redirect(f"/profile/{user[1]}")
+            if user[3]:
+                return redirect(f"/admin/{user[1]}")
+            else:
+                return redirect(f"/profile/{user[1]}")
         else:
             error = "Invalid username or password"
             return render_template("Login.html", error=error)
@@ -34,6 +37,14 @@ def login():
 def profile(username):
     if 'user' in session:
         return render_template("Home.html", username=username)
+    else:
+        return redirect("/")
+
+
+@app.route("/admin/<username>")
+def admin(username):
+    if "user" in session:
+        return render_template("./Admin/Admin.html", username=username)
     else:
         return redirect("/")
 
