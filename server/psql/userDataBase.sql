@@ -12,11 +12,11 @@ CREATE TABLE users (
     CreatedOn VARCHAR(255),
     LastActive INTEGER,
     Mobile INTEGER,
-    Gender VARCHAR(255),
-    Interest VARCHAR(255)
+    Gender VARCHAR(255)
 );
-INSERT INTO users (Email, Password, UserName, Admin) 
-VALUES 
-('kyleKovac97@gmail.com', 'Admin', 'kyle', 'true'),
-('morty.smith@gmail.com', 'password1', 'Morty-Smith', 'false')
+INSERT INTO users (Email, Password, UserName, Admin, CreatedOn, DataOfBirth, Gender)
+VALUES
+('kyleKovac97@gmail.com', 'Admin', 'kyle', true, '2023-05-04', '1997-05-01', 'male'),
+('morty.smith@gmail.com', 'password1', 'Morty-Smith', false, '2023-05-04', '2005-08-12', 'male');
+
 

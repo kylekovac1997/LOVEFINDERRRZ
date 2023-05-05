@@ -1,6 +1,6 @@
-import os
-import psycopg2
 from flask import Flask, render_template, redirect, session, request
+import psycopg2
+import os
 
 app = Flask(__name__)
 
@@ -14,13 +14,14 @@ def login():
         identifier = request.form.get('identifier')
         password = request.form["password"]
 
-        conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-        cursor = conn.cursor()
+        # postgres://lovefinderrrz_user:ZgjVFWhl9LTbxfUFWffyfQjDrHWEBAt6@dpg-ch9mocak728hts30jarg-a.oregon-postgres.render.com/lovefinderrrz
+        connect = psycopg2.connect(os.getenv("DATABASE_URL"))
+        cursor = connect.cursor()
         cursor.execute(
             "SELECT Email, UserName, Password, Admin FROM users WHERE (Email=%s OR UserName=%s) AND Password=%s",
             (identifier, identifier, password))
         user = cursor.fetchone()
-        conn.close()
+        connect.close()
         if user is not None:
             session['user'] = user
             if user[3]:
@@ -51,4 +52,4 @@ def admin(username):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", default=5000))
+    app.run(debug=True)
