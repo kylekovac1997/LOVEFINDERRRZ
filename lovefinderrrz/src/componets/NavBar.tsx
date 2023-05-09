@@ -23,12 +23,14 @@ export const Navbar = ({ isAdmin }: NavBarProps) => {
 
   return (
     <>
-      <DialogFunction
-        buttonText={"Logout"}
-        headerText={"Are you sure you want to leave"}
-      >
-        <Logout></Logout>
-      </DialogFunction>
+      <div style={{ float: "right", marginTop: -18, marginRight: 20 }}>
+        <DialogFunction
+          buttonText={"Logout"}
+          headerText={"Are you sure you want to leave"}
+        >
+          <Logout></Logout>
+        </DialogFunction>
+      </div>
       <NavBarContainer>
         <NavBarTitle emoji={" ❤️"} text={"LOVEFINDERRRZ"}></NavBarTitle>
         <StyledLink to="/Home">Home</StyledLink>

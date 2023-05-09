@@ -110,6 +110,7 @@ export const DialogFunction: React.FC<DialogProps> = ({
       <DialogContainer open={isOpen} onClose={closeDialog}>
         <h2>{headerText}</h2>
         <div className="dialog-children">{children}</div>
+        <br />
         <button onClick={closeDialog}>X</button>
       </DialogContainer>
     </>

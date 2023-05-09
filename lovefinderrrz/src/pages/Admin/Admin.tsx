@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { AdminNavBarContainer } from "../../componets/AdminNavBar";
 
 interface AdminProps {
   username: string;
@@ -20,6 +21,7 @@ export function Admin() {
 
   return (
     <>
+      <AdminNavBarContainer></AdminNavBarContainer>
       <h1>Admin Page</h1>
 
       {adminDetails.map((info) => (

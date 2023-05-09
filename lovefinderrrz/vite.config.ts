@@ -11,6 +11,8 @@ export default defineConfig({
     }
   },
   build: {
+    outDir: './server/static',
+    emptyOutDir: true,
     rollupOptions: {
       external: ['react-is']
     }
