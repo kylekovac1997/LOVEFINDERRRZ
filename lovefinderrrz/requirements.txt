@@ -1,6 +1,6 @@
 Flask
 datetime
-psycopg2
-bcrypt
 
-psycopg2.extras
+bcrypt
+psycopg2-binary
+psycopg2-extras
