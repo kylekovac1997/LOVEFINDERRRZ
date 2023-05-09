@@ -8,5 +8,10 @@ export default defineConfig({
       '/api': 'http://localhost:5000/'
     }
   },
+  build: {
+    rollupOptions: {
+      external: ['react-is']
+    }
+  },
   plugins: [react()],
 })
