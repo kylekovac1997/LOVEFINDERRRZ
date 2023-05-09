@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, Response, jsonify, request, session, redirect
+from flask import Flask, jsonify, request, session
 import psycopg2
 import os
 import bcrypt
@@ -100,4 +100,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
