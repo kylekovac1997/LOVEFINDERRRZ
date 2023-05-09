@@ -2,5 +2,5 @@ Flask
 datetime
 psycopg2
 bcrypt
-os
+
 psycopg2.extras
