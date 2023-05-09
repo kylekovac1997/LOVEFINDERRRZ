@@ -1,6 +1,6 @@
 Flask
 datetime
-
+gunicorn
 bcrypt
 psycopg2-binary
 
