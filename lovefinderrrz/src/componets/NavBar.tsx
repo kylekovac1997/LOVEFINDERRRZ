@@ -26,7 +26,6 @@ export const Navbar = ({ isAdmin }: NavBarProps) => {
       <DialogFunction
         buttonText={"Logout"}
         headerText={"Are you sure you want to leave"}
-        style={{}}
       >
         <Logout></Logout>
       </DialogFunction>
