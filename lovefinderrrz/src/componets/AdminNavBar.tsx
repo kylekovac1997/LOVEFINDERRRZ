@@ -15,7 +15,7 @@ export const AdminNavBarContainer = () => {
       <AdminNavBar>
         <StyledAdminLink to="/FindUsers">Find Users</StyledAdminLink>
         <br />
-        <StyledAdminLink to="/FindUsers">Edit Users</StyledAdminLink>
+        <StyledAdminLink to="/EditUsers">Edit Users</StyledAdminLink>
       </AdminNavBar>
     </>
   );

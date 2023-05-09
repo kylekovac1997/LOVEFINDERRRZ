@@ -1,13 +1,23 @@
 from datetime import datetime
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, send_from_directory
 import psycopg2
 import os
 import bcrypt
 from psycopg2.extras import RealDictCursor
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/')
+
 
 app.config["SECRET_KEY"] = 'my_secret_key'
+
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_from_directory(app.static_folder, filename)
+
 
 
 @app.route('/api/login', methods=['POST'])

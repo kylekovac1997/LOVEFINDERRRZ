@@ -11,11 +11,9 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: './server/static',
+    outDir: '/home/kyle/Desktop/sei-course/project2/server/static',
     emptyOutDir: true,
-    rollupOptions: {
-      external: ['react-is']
-    }
+    
   },
   plugins: [react()],
 })

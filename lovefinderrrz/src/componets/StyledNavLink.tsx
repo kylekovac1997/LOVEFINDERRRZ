@@ -20,7 +20,7 @@ export const StyledLink = styled(NavLink)`
 export const StyledAdminLink = styled(NavLink)`
   color: #f2f2f2;
   text-decoration: none;
-  margin: 0 1rem;
+  margin: 18px;
   font-size: 1.2rem;
   float: right;
   &:hover {

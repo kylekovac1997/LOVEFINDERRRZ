@@ -4,6 +4,8 @@ import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { About } from "./pages/About";
 import { Admin } from "./pages/Admin/Admin";
+import { FindUsers } from "./pages/Admin/FindUsers";
+import { EditUsers } from "./pages/Admin/EditUsers";
 import { UserPage } from "./pages/User";
 import { Navbar } from "./componets/NavBar";
 import { Website } from "./pages/Website";
@@ -29,6 +31,8 @@ function App() {
         <Route path="/About" element={<About />} />
         <Route path="/User" element={<UserPage />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/FindUsers" element={<FindUsers />} />
+        <Route path="/EditUsers" element={<EditUsers />} />
         <Route path="/NewUser" element={<NewUser />}></Route>
       </Routes>
     </>
