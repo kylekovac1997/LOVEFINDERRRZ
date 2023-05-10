@@ -4,7 +4,6 @@ import { useState } from "react";
 import axios from "axios";
 
 export const FindUsers = () => {
-  const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -18,7 +17,6 @@ export const FindUsers = () => {
     event.preventDefault();
 
     const response = await axios.post("/api/admin/searchUser", {
-      search_userid: userId,
       search_username: username,
       search_firstname: firstName,
       search_lastname: lastName,
@@ -35,14 +33,6 @@ export const FindUsers = () => {
       <AdminNavBarContainer></AdminNavBarContainer>
       <h1>Find Users</h1>
       <form onSubmit={handleRegistration}>
-        <label>
-          UserID:
-          <input
-            type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-          />
-        </label>
         <br />
         <label>
           Username:
@@ -118,20 +108,21 @@ export const FindUsers = () => {
               <li key={result[0]}>
                 User ID: {result[0]}
                 <br />
-                Username: {result[1]}
+                Username: {result[3]}
                 <br />
-                First Name: {result[2]}
+                First Name: {result[11]}
                 <br />
-                Last Name: {result[3]}
+                Last Name: {result[12]}
                 <br />
-                Gender: {result[4]}
+                Gender: {result[10]}
                 <br />
-                Date of Birth: {result[5]}
+                Date of Birth: {result[6]}
                 <br />
-                Email: {result[6]}
+                Email: {result[1]}
                 <br />
-                Phone: {result[7]}
+                Phone: {result[9]}
                 <br />
+                <br></br>
               </li>
             ))}
           </ul>

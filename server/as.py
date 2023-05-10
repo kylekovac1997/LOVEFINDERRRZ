@@ -64,32 +64,34 @@ def admin():
 
 @app.route('/api/admin/searchUser', methods=['POST'])
 def adminSearch():
-        if request.method == 'POST':
-            search_userid = request.form.get('search_userid')
-            search_email = request.form.get('search_email')
-            search_username = request.form.get('search_username')
-            search_firstname = request.form.get('search_firstname')
-            search_lastname = request.form.get('search_lastname')
-            search_gender = request.form.get('search_gender')
-            search_mobile = request.form.get('search_mobile')
-            search_dob = request.form.get('search_dob')
+    if request.method == 'POST':
+        search_email = request.json.get('search_email', '')
+        search_username = request.json.get('search_username', '')
+        search_firstname = request.json.get('search_firstname', '')
+        search_lastname = request.json.get('search_lastname', '')
+        search_gender = request.json.get('search_gender', '')
+        search_mobile = request.json.get('search_mobile', '')
+        search_dateofbirth = request.json.get('search_dob', '')
+        os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
 
-            connect = psycopg2.connect(os.getenv("DATABASE_URL"))
-            cursor = connect.cursor()
-            cursor.execute("""
-                SELECT * FROM users WHERE
-                (userid LIKE %s OR %s = '') AND
-                (LOWER(email) LIKE LOWER(%s) OR %s = '') AND
-                (LOWER(username) LIKE LOWER(%s) OR %s = '') AND
-                (LOWER(firstname) LIKE LOWER(%s) OR %s = '') AND
-                (LOWER(lastname) LIKE LOWER(%s) OR %s = '') AND
-                (LOWER(gender) LIKE LOWER(%s) OR %s = '') AND
-                (mobile::text LIKE %s OR %s = '') AND
-                (dob::text LIKE %s OR %s = '')
-            """, (f'%{search_userid}%', search_userid, f'%{search_email}%', search_email, f'%{search_username}%', search_username, f'%{search_firstname}%', search_firstname, f'%{search_lastname}%', search_lastname, f'%{search_gender}%', search_gender, f'%{search_mobile}%', search_mobile, f'%{search_dob}%', search_dob))
-            results = cursor.fetchall()
-            connect.close()
-            return jsonify(results=results)
+        connect = psycopg2.connect(os.getenv("DATABASE_URL"))
+        cursor = connect.cursor()
+        cursor.execute("""
+            SELECT * FROM users WHERE
+            (userid::text LIKE %s OR %s = '') AND
+            (LOWER(email) LIKE LOWER(%s) OR %s = '') AND
+            (LOWER(username) LIKE LOWER(%s) OR %s = '') AND
+            (LOWER(firstname) LIKE LOWER(%s) OR %s = '') AND
+            (LOWER(lastname) LIKE LOWER(%s) OR %s = '') AND
+            (LOWER(gender) LIKE LOWER(%s) OR %s = '') AND
+            (mobile::text LIKE %s OR %s = '') AND
+            (dateofbirth::text LIKE %s OR %s = '')
+        """, (f'%{search_username}%', search_username, f'%{search_email}%', search_email, f'%{search_username}%', search_username, f'%{search_firstname}%', search_firstname, f'%{search_lastname}%', search_lastname, f'%{search_gender}%', search_gender, f'%{search_mobile}%', search_mobile, f'%{search_dateofbirth}%', search_dateofbirth))
+        results = cursor.fetchall()
+        connect.close()
+        return jsonify(results=results)
+
+
 
 
 @app.route('/api/user', methods=['GET'])
