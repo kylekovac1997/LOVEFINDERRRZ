@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 
 export const FindUsers = () => {
+  const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -17,13 +18,13 @@ export const FindUsers = () => {
     event.preventDefault();
 
     const response = await axios.post("/api/admin/searchUser", {
+      search_userid: userId,
       search_username: username,
       search_firstname: firstName,
       search_lastname: lastName,
       search_mobile: phone,
       search_email: email,
       search_gender: gender,
-      search_userid: null,
       search_dob: dateOfBirth,
     });
     setSearchResults(response.data.results);
@@ -34,6 +35,15 @@ export const FindUsers = () => {
       <AdminNavBarContainer></AdminNavBarContainer>
       <h1>Find Users</h1>
       <form onSubmit={handleRegistration}>
+        <label>
+          UserID:
+          <input
+            type="text"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          />
+        </label>
+        <br />
         <label>
           Username:
           <input

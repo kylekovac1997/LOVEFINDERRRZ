@@ -8,7 +8,7 @@ interface NavBarTitleProps {
 const Title = styled.h1`
   align-items: center;
   font-size: 40px;
-  margin-right: 430px;
+  ()margin-right: 430px;
   position: relative;
   display: flex;
 `;

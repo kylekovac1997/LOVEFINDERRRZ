@@ -17,24 +17,25 @@ export function Registration() {
 
   async function handleRegistration(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // if (password !== comfirmPassword) {
-    //   // Handle password mismatch error
-    //   return;
-    // }
-
-    const response = await axios.post("/api/register", {
-      "first-name": firstName,
-      "last-name": lastName,
-      gender: gender,
-      "date-of-birth": dateOfBirth,
-      userName: username,
-      email: email,
-      phoneNumber: phone,
-      Password: password,
-    });
-    if (response.status >= 0 && response.status < 500) {
-      navigate("/NewUser");
+    if (password === comfirmPassword) {
+      const response = await axios.post("/api/register", {
+        "first-name": firstName,
+        "last-name": lastName,
+        gender: gender,
+        "date-of-birth": dateOfBirth,
+        userName: username,
+        email: email,
+        phoneNumber: phone,
+        Password: password,
+      });
+      if (response.status >= 0 && response.status < 500) {
+        navigate("/NewUser");
+      } else {
+        alert("An error occurred while processing your registration.");
+      }
     } else {
+      setComfirmPassword("");
+      alert("The passwords do not match. Please try again.");
     }
   }
 

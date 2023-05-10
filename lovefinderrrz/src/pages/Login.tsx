@@ -8,17 +8,24 @@ export function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await axios.post("/api/login", { username, password });
-    const data = response.data;
-    console.log(data);
-    if (data.is_admin) {
-      sessionStorage.setItem("is_admin", "true");
-      navigate("/Admin");
-    } else {
-      navigate("/User");
-    }
+    axios
+      .post("/api/login", { username, password })
+      .then((response) => {
+        const data = response.data;
+        if (data.is_admin) {
+          sessionStorage.setItem("is_admin", "true");
+          navigate("/Admin");
+        } else {
+          navigate("/User");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Invalid username or password. Please try again");
+        setPassword("");
+      });
   };
 
   return (
@@ -43,6 +50,7 @@ export function Login() {
             />
           </label>
           <button type="submit">Submit</button>
+          <br />
         </form>
       </DialogFunction>
     </>

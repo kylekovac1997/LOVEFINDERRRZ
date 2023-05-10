@@ -5,8 +5,12 @@ export const Website = () => {
   return (
     <div>
       this the the front website
-      <Login />
-      <Registration />
+      <div>
+        <Login />
+      </div>
+      <div style={{ right: "20px" }}>
+        <Registration />
+      </div>
     </div>
   );
 };

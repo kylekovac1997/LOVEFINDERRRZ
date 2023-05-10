@@ -64,7 +64,6 @@ def admin():
 
 @app.route('/api/admin/searchUser', methods=['POST'])
 def adminSearch():
-    if "user" in session:
         if request.method == 'POST':
             search_userid = request.form.get('search_userid')
             search_email = request.form.get('search_email')
@@ -79,7 +78,7 @@ def adminSearch():
             cursor = connect.cursor()
             cursor.execute("""
                 SELECT * FROM users WHERE
-                (userid::text LIKE %s OR %s = '') AND
+                (userid LIKE %s OR %s = '') AND
                 (LOWER(email) LIKE LOWER(%s) OR %s = '') AND
                 (LOWER(username) LIKE LOWER(%s) OR %s = '') AND
                 (LOWER(firstname) LIKE LOWER(%s) OR %s = '') AND
@@ -90,7 +89,7 @@ def adminSearch():
             """, (f'%{search_userid}%', search_userid, f'%{search_email}%', search_email, f'%{search_username}%', search_username, f'%{search_firstname}%', search_firstname, f'%{search_lastname}%', search_lastname, f'%{search_gender}%', search_gender, f'%{search_mobile}%', search_mobile, f'%{search_dob}%', search_dob))
             results = cursor.fetchall()
             connect.close()
-        return jsonify(results=results)
+            return jsonify(results=results)
 
 
 @app.route('/api/user', methods=['GET'])

@@ -4,3 +4,10 @@ body {
     background-color: #04B4AE;
   }
   
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      font-size: 16px;
+    }
+  }
+  
