@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
-import portal from "./PortalSound.mp3";
+import portal from "./sounds/PortalSound.mp3";
 import styled, { keyframes } from "styled-components";
-import portalGif from "../componets/portal.gif";
+import portalGif from "../componets/images/portal.gif";
 
 interface DialogProps {
   buttonText: string;

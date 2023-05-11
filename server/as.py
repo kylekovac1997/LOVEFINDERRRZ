@@ -101,7 +101,7 @@ def adminSearch():
 
 
 @app.route('/api/user', methods=['GET'])
-@cache.cached(timeout=50)
+@cache.cached(timeout=70)
 def user():
     username = session.get('username')
 

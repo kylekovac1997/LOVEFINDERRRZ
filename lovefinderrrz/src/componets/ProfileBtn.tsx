@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import portalGif from "../componets/portal.gif";
+import portalGif from "../componets/images/portal.gif";
 interface ButtonProps {
   text: string;
   onClick: () => void;
