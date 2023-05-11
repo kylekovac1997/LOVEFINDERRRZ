@@ -10,6 +10,7 @@ import { UserPage } from "./pages/User";
 import { Navbar } from "./componets/NavBar";
 import { Website } from "./pages/Website";
 import { NewUser } from "./pages/NewUser";
+import { UserProfile } from "./pages/UserProfile";
 
 function App() {
   const isAdmin = sessionStorage.getItem("is_admin") === "true";
@@ -34,6 +35,7 @@ function App() {
         <Route path="/FindUsers" element={<FindUsers />} />
         <Route path="/EditUsers" element={<EditUsers />} />
         <Route path="/NewUser" element={<NewUser />}></Route>
+        <Route path="/UserProfile/:username" element={<UserProfile />}></Route>
       </Routes>
     </>
   );

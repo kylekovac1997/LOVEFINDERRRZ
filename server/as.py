@@ -126,6 +126,55 @@ def user():
 
     return jsonify(users=users)
 
+@app.route('/api/home', methods=['GET'])
+@cache.cached(timeout=70)
+def home():
+
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor(cursor_factory=RealDictCursor)
+
+    cursor.execute(
+        "SELECT username, profile_picture FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid",
+    )
+
+    users = cursor.fetchall()
+
+    for user in users:
+        profile_picture = user['profile_picture']
+        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+
+    cursor.close()
+    connect.close()
+
+    return jsonify(users=users)
+
+@app.route('/api/UserProfiles/<username>', methods=['GET'])
+@cache.cached(timeout=70)
+def userProfiles(username):
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor(cursor_factory=RealDictCursor)
+
+    cursor.execute(
+        "SELECT * FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid WHERE users.username = %s",
+        (username,)
+    )
+
+    users = cursor.fetchall()
+
+    for user in users:
+        profile_picture = user['profile_picture']
+        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+
+    cursor.close()
+    connect.close()
+
+    return jsonify(users=users)
+
+
     
 @app.route('/api/register', methods=['POST'])
 @cache.cached(timeout=50)
