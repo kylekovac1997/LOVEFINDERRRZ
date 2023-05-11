@@ -25,7 +25,11 @@ export const UserPage = () => {
           <div key={index}>
             <p>{user.username}</p>
             <p>{user.userid}</p>
-            <img src={user.profile_picture} alt="" style={{ width: "500px" }} />
+            <img
+              src={`data:image/png;base64,${user.profile_picture}`}
+              alt="{user.profile_picture}"
+            />
+
             <p>{user.profile_description}</p>
           </div>
         ))}

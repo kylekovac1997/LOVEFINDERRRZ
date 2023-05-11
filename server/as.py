@@ -4,15 +4,14 @@ from flask import Flask, jsonify, request, session, send_from_directory
 import psycopg2
 import os
 import bcrypt
-
+from flask_caching import Cache
+#https://flask-caching.readthedocs.io/en/latest/
 
 from psycopg2.extras import RealDictCursor
-
+cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
 app = Flask(__name__, static_folder='static', static_url_path='/')
-
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
-
 app.config["SECRET_KEY"] = 'my_secret_key'
+cache.init_app(app)
 
 @app.route('/')
 def index():
@@ -25,6 +24,7 @@ def static_files(filename):
 
 
 @app.route('/api/login', methods=['POST'])
+@cache.cached(timeout=50)
 def login():
 
     username = request.json.get('username')
@@ -51,6 +51,7 @@ def login():
 
 
 @app.route('/api/admin', methods=['GET'])
+@cache.cached(timeout=50)
 def admin():
  
     if session.get('is_admin'):
@@ -67,6 +68,7 @@ def admin():
         return jsonify(user=user)
 
 @app.route('/api/admin/searchUser', methods=['POST'])
+@cache.cached(timeout=50)
 def adminSearch():
     if request.method == 'POST':
         search_email = request.json.get('search_email', '')
@@ -99,6 +101,7 @@ def adminSearch():
 
 
 @app.route('/api/user', methods=['GET'])
+@cache.cached(timeout=50)
 def user():
     username = session.get('username')
 
@@ -113,19 +116,19 @@ def user():
     )
 
     users = cursor.fetchall()
-    for user in users:
-        if 'profile_picture' in user:
-            profile_picture = user['profile_picture']
-            if isinstance(profile_picture, memoryview):
-                user['profile_picture'] = base64.b64encode(profile_picture.tobytes()).decode('utf-8')
 
-    
+    for user in users:
+        profile_picture = user['profile_picture']
+        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+
     cursor.close()
     connect.close()
 
     return jsonify(users=users)
+
     
 @app.route('/api/register', methods=['POST'])
+@cache.cached(timeout=50)
 def register():
     firstName = request.json.get('first-name')
     lastName = request.json.get('last-name')
@@ -153,9 +156,9 @@ def register():
     return jsonify({'message': 'You have made a new account'})
 
 @app.route('/api/users', methods=['POST'])
+@cache.cached(timeout=50)
 def userprofile():
     profile_picture = request.files.get('profile_picture').read()
-    profile_picture_base64 = base64.b64encode(profile_picture).decode('utf-8')
 
     interests = request.form.get('interests')
     profile_description = request.form.get('profile_description')
@@ -164,15 +167,16 @@ def userprofile():
     connect = psycopg2.connect(os.environ["DATABASE_URL"])
     cursor = connect.cursor()
     cursor.execute(
-    """INSERT INTO user_profiles (profile_picture, interests, profile_description)
-       VALUES (%s, %s, %s)""",
-    (profile_picture_base64, interests, profile_description))
+        """INSERT INTO user_profiles (profile_picture, interests, profile_description)
+           VALUES (%s, %s, %s)""",
+        (profile_picture, interests, profile_description))
 
     connect.commit()
     cursor.close()
     connect.close()
 
     return jsonify({'message': 'User profile created'})
+
 
 
 
