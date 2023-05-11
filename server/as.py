@@ -1,12 +1,16 @@
+import base64
 from datetime import datetime
 from flask import Flask, jsonify, request, session, send_from_directory
 import psycopg2
 import os
 import bcrypt
+
+
 from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__, static_folder='static', static_url_path='/')
 
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
 app.config["SECRET_KEY"] = 'my_secret_key'
 
@@ -43,7 +47,7 @@ def login():
             session['username'] = username
             return jsonify({'is_admin': is_admin})
 
-    return jsonify({'message': 'Invalid username or password'}), 401
+    return jsonify({'message': 'Invalid username or password'})
 
 
 @app.route('/api/admin', methods=['GET'])
@@ -97,15 +101,29 @@ def adminSearch():
 @app.route('/api/user', methods=['GET'])
 def user():
     username = session.get('username')
-    if username:
-        os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
-        connect = psycopg2.connect(os.environ["DATABASE_URL"])
-        cursor = connect.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(
-            "SELECT username, email, firstname, lastname, userid FROM users WHERE username = %s",
-            (username,))
-        user = cursor.fetchall()
-        return jsonify(user=user)
+
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor(cursor_factory=RealDictCursor)
+
+    cursor.execute(
+        "SELECT * FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid WHERE users.username = %s",
+        (username,)
+    )
+
+    users = cursor.fetchall()
+    for user in users:
+        if 'profile_picture' in user:
+            profile_picture = user['profile_picture']
+            if isinstance(profile_picture, memoryview):
+                user['profile_picture'] = base64.b64encode(profile_picture.tobytes()).decode('utf-8')
+
+    
+    cursor.close()
+    connect.close()
+
+    return jsonify(users=users)
     
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -133,6 +151,30 @@ def register():
     cursor.close()
     connect.close()
     return jsonify({'message': 'You have made a new account'})
+
+@app.route('/api/users', methods=['POST'])
+def userprofile():
+    profile_picture = request.files.get('profile_picture').read()
+    profile_picture_base64 = base64.b64encode(profile_picture).decode('utf-8')
+
+    interests = request.form.get('interests')
+    profile_description = request.form.get('profile_description')
+
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor()
+    cursor.execute(
+    """INSERT INTO user_profiles (profile_picture, interests, profile_description)
+       VALUES (%s, %s, %s)""",
+    (profile_picture_base64, interests, profile_description))
+
+    connect.commit()
+    cursor.close()
+    connect.close()
+
+    return jsonify({'message': 'User profile created'})
+
+
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
