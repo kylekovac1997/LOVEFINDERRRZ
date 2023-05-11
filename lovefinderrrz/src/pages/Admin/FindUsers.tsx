@@ -102,33 +102,29 @@ export const FindUsers = () => {
       </form>
       <div>
         <h2>Search Results:</h2>
-        {searchResults.length > 0 ? (
-          <ul>
-            {searchResults.map((result) => (
-              <li key={result[0]}>
-                User ID: {result[0]}
-                <br />
-                Username: {result[3]}
-                <br />
-                First Name: {result[11]}
-                <br />
-                Last Name: {result[12]}
-                <br />
-                Gender: {result[10]}
-                <br />
-                Date of Birth: {result[6]}
-                <br />
-                Email: {result[1]}
-                <br />
-                Phone: {result[9]}
-                <br />
-                <br></br>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No results found.</p>
-        )}
+        <ul>
+          {searchResults.map((result) => (
+            <li key={result[0]}>
+              User ID: {result[0]}
+              <br />
+              Username: {result[3]}
+              <br />
+              First Name: {result[11]}
+              <br />
+              Last Name: {result[12]}
+              <br />
+              Gender: {result[10]}
+              <br />
+              Date of Birth: {result[6]}
+              <br />
+              Email: {result[1]}
+              <br />
+              Phone: {result[9]}
+              <br />
+              <br></br>
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );
