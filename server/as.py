@@ -51,7 +51,7 @@ def login():
 
 
 @app.route('/api/admin', methods=['GET'])
-@cache.cached(timeout=50)
+@cache.cached(timeout=10)
 def admin():
         username = session.get('username')
         os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
