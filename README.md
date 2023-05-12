@@ -1,6 +1,6 @@
 # LoveFinderrrz Dating Website
 
-This repository contains the source code for LoveFinderrrz, a groundbreaking dating website developed using React and Express. The project aims to provide a platform for users to connect with potential partners who share their passion for app development and technology.
+This repository contains the source code for LoveFinderrrz, a dating website developed using React and Flask as part of our Project 2 assignment. The project aims to provide a platform for users to connect with potential partners who share their passion for app development and technology. link to https://lovefinderrrz.onrender.com
 
 ## Features
 
