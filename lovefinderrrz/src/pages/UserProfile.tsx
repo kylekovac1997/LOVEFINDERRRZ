@@ -9,7 +9,7 @@ import {
   Username,
   UserContainer,
 } from "../componets/ProfileStyleLayout";
-
+import message from ".././componets/sounds/COMCell_Message sent (ID 1313)_BSB.wav";
 interface UserProfileProps {
   userid: string;
   username: string;
@@ -47,13 +47,15 @@ export function UserProfile() {
   const handleDislike = (userid: string) => {
     console.log("Disliked user with userid:", userid);
   };
-
+  const messageSound = new Audio(message);
   const sendMessage = (senderId: string, recipientId: string) => {
     axios.post("/api/sendMessage", {
       sender_id: senderId,
       recipient_id: recipientId,
       content: messageText,
     });
+    messageSound.play();
+    setMessageText("");
   };
 
   return (
