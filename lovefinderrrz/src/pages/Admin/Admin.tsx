@@ -9,6 +9,7 @@ import {
   Username,
   UserContainer,
 } from "../../componets/ProfileStyleLayout";
+import styled from "styled-components";
 
 interface AdminProps {
   username: string;
@@ -26,13 +27,41 @@ interface AdminProps {
 
 export function Admin() {
   const [adminDetails, setAdminDetails] = useState<AdminProps[]>([]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   useEffect(() => {
     axios.get("/api/admin").then((response) => {
       setAdminDetails(response.data.admin);
     });
+    axios.get("/api/messages").then((response) => {
+      setMessages(response.data.messages || []);
+    });
   }, []);
+  interface Message {
+    content: string;
+    sender_id: string;
+    recipient_id: string;
+    sender_username: string;
+    recipient_username: string;
+  }
 
+  const MessageContainer = styled.div`
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  `;
+  const MessageDialog = styled.div`
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  `;
+
+  const MessageHeader = styled.div`
+    font-weight: bold;
+  `;
+
+  const MessageContent = styled.div`
+    margin-top: 5px;
+  `;
   return (
     <>
       <AdminNavBarContainer></AdminNavBarContainer>
@@ -75,6 +104,20 @@ export function Admin() {
           </UserContainer>
         ))}
       </div>
+      <h3>Messages</h3>
+      <MessageContainer>
+        {messages.map((message, index) => (
+          <MessageDialog key={index}>
+            <MessageHeader>
+              <p>Sender: {message.sender_username}</p>
+              <p>Recipient: {message.recipient_username}</p>
+            </MessageHeader>
+            <MessageContent>
+              <p>{message.content}</p>
+            </MessageContent>
+          </MessageDialog>
+        ))}
+      </MessageContainer>
     </>
   );
 }

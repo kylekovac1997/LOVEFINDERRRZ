@@ -28,21 +28,32 @@ interface UserProfileProps {
 export function UserProfile() {
   const { username } = useParams<{ username: string }>();
   const [userProfiles, setUserProfiles] = useState<UserProfileProps[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [messageText, setMessageText] = useState("");
 
   useEffect(() => {
     axios.get(`/api/UserProfiles/${username}`).then((response) => {
       setUserProfiles(response.data.users);
     });
+    axios.get("/api/user").then((response) => {
+      setCurrentUser(response.data.users[0]);
+    });
   }, [username]);
 
   const handleLike = (userid: string) => {
-    axios.post(`/api/liked/${userid}`);
-    console.log(userid);
+    console.log("Liked user with userid:", userid);
   };
 
-  const handleDislike = (id: string) => {
-    // Implement your logic for handling a dislike event
-    console.log("Disliked user with id:", id);
+  const handleDislike = (userid: string) => {
+    console.log("Disliked user with userid:", userid);
+  };
+
+  const sendMessage = (senderId: string, recipientId: string) => {
+    axios.post("/api/sendMessage", {
+      sender_id: senderId,
+      recipient_id: recipientId,
+      content: messageText,
+    });
   };
 
   return (
@@ -50,14 +61,12 @@ export function UserProfile() {
       {userProfiles.map((user, index) => (
         <div key={index}>
           <UserContainer key={index}>
-            {" "}
             <Username>{user.username}</Username>
             <Picture
               src={`data:image/png;base64,${user.profile_picture}`}
-              alt="{user.profile_picture}"
+              alt={user.profile_picture}
             ></Picture>
             <Details>
-              {" "}
               <button onClick={() => handleLike(user.userid)}>Like</button>
               <button onClick={() => handleDislike(user.userid)}>X</button>
               <h4>UserInfo</h4>
@@ -85,6 +94,19 @@ export function UserProfile() {
               {user.interests}
             </Interests>
           </UserContainer>
+          <div>
+            <input
+              type="text"
+              placeholder="Type your message"
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+            />
+            <button
+              onClick={() => sendMessage(currentUser?.userid, user.userid)}
+            >
+              Send
+            </button>
+          </div>
         </div>
       ))}
     </>

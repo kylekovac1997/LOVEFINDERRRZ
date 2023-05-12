@@ -6,7 +6,7 @@ const AdminNavBar = styled(Container)`
   background-color: #fe2e64;
   float: right;
   width: 120px;
-  height: 700px;
+  height: 989px;
 `;
 
 export const AdminNavBarContainer = () => {
