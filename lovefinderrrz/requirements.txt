@@ -3,4 +3,4 @@ datetime
 gunicorn
 bcrypt
 psycopg2-binary
-
+flask_caching
