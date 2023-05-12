@@ -21,8 +21,8 @@ cache.init_app(app)
 
 @app.route('/')
 def index():
-    title = '❤️LOVEFINDERRRZ'
-    return send_from_directory(app.static_folder, 'index.html', title=title)
+    
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/<path:filename>')
 def static_files(filename):
