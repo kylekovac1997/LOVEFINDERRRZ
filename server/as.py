@@ -47,25 +47,31 @@ def login():
             session['username'] = username
             return jsonify({'is_admin': is_admin})
 
-    return jsonify({'message': 'Invalid username or password'})
+    return jsonify({"message": "Successful"})
 
 
 @app.route('/api/admin', methods=['GET'])
 @cache.cached(timeout=50)
 def admin():
- 
-    if session.get('is_admin'):
-   
         username = session.get('username')
         os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
 
         connect = psycopg2.connect(os.environ["DATABASE_URL"])
         cursor = connect.cursor(cursor_factory=RealDictCursor)
         cursor.execute(
-            "SELECT username, email, firstname, lastname, userid FROM users WHERE admin = true AND username = %s",
-            (username,))
-        user = cursor.fetchall()
-        return jsonify(user=user)
+        "SELECT * FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid WHERE users.username  = %s ",
+        (username,)
+    )
+
+        admin = cursor.fetchall()
+
+        for user in admin:
+            profile_picture = user['profile_picture']
+            if profile_picture is not None: 
+                user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+            else:
+                user['profile_picture'] = ""
+        return jsonify(admin=admin)
 
 @app.route('/api/admin/searchUser', methods=['POST'])
 @cache.cached(timeout=50)
@@ -119,8 +125,10 @@ def user():
 
     for user in users:
         profile_picture = user['profile_picture']
-        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
-
+        if profile_picture is not None:  
+            user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+        else:
+            user['profile_picture'] = ""
     cursor.close()
     connect.close()
 
@@ -136,14 +144,17 @@ def home():
     cursor = connect.cursor(cursor_factory=RealDictCursor)
 
     cursor.execute(
-        "SELECT username, profile_picture FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid",
+        "SELECT username, profile_picture FROM users LEFT JOIN user_profiles ON users.userid = user_profiles.userid WHERE users.active = true ",
     )
 
     users = cursor.fetchall()
 
     for user in users:
         profile_picture = user['profile_picture']
-        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+        if profile_picture is not None:  
+            user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+        else:
+            user['profile_picture'] = ""
 
     cursor.close()
     connect.close()
@@ -167,14 +178,30 @@ def userProfiles(username):
 
     for user in users:
         profile_picture = user['profile_picture']
-        user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+        if profile_picture is not None:  
+            user['profile_picture'] = base64.b64encode(profile_picture).decode('utf-8')
+        else:
+            user['profile_picture'] = ""
 
     cursor.close()
     connect.close()
 
     return jsonify(users=users)
 
+@app.route("/api/liked/<int:userid>", methods=["POST"])
+def like(userid):
+    database_url = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
 
+    connection = psycopg2.connect(database_url)
+    cursor = connection.cursor()
+
+    cursor.execute("INSERT INTO user_profiles (liked) VALUES (%s)", (userid,))
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+    return jsonify({"message": "Successful"})
+    
     
 @app.route('/api/register', methods=['POST'])
 @cache.cached(timeout=50)
@@ -202,7 +229,7 @@ def register():
     connect.commit()
     cursor.close()
     connect.close()
-    return jsonify({'message': 'You have made a new account'})
+    return jsonify({"message": "Successful"})
 
 @app.route('/api/users', methods=['POST'])
 @cache.cached(timeout=50)
@@ -224,15 +251,48 @@ def userprofile():
     cursor.close()
     connect.close()
 
-    return jsonify({'message': 'User profile created'})
+    return jsonify({"message": "Successful"})
 
+@app.route('/api/deactivate', methods=['POST'])
+def deactivate():
+    username = session.get('username')
 
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor()
+
+    cursor.execute("UPDATE users SET active = false WHERE username = %s", (username,))
+    connect.commit()
+
+    cursor.close()
+    connect.close()
+
+    return jsonify({"message": "User deactivated"})
+
+@app.route('/api/reactivate', methods=['POST'])
+def reactivate():
+    username = session.get('username')
+
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor()
+
+    cursor.execute("UPDATE users SET active = true WHERE username = %s", (username,))
+    connect.commit()
+
+    cursor.close()
+    connect.close()
+
+    return jsonify({"message": "User reactivated"})
 
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
+    session.pop('is_admin', None)
+    session.pop('username', None)
     session.clear()
-    return jsonify({'message': 'You have been logged out'})
+    session.modified = True
+    return jsonify({"message": "Successful"})
 
 
 if __name__ == '__main__':

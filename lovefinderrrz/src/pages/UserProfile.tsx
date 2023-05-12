@@ -1,9 +1,17 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {
+  Interests,
+  Details,
+  MainInfo,
+  Picture,
+  Username,
+  UserContainer,
+} from "../componets/ProfileStyleLayout";
 
 interface UserProfileProps {
-  id: string;
+  userid: string;
   username: string;
   firstname: string;
   lastname: string;
@@ -14,6 +22,7 @@ interface UserProfileProps {
   createon: string;
   gender: string;
   profile_description: string;
+  profile_picture: string;
 }
 
 export function UserProfile() {
@@ -26,9 +35,9 @@ export function UserProfile() {
     });
   }, [username]);
 
-  const handleLike = (id: string) => {
-    // Implement your logic for handling a like event
-    console.log("Liked user with id:", id);
+  const handleLike = (userid: string) => {
+    axios.post(`/api/liked/${userid}`);
+    console.log(userid);
   };
 
   const handleDislike = (id: string) => {
@@ -38,20 +47,44 @@ export function UserProfile() {
 
   return (
     <>
-      {userProfiles.map((userProfile) => (
-        <div key={userProfile.id}>
-          <h2>{userProfile.username}</h2>
-          <p>First Name: {userProfile.firstname}</p>
-          <p>Last Name: {userProfile.lastname}</p>
-          <p>Date of Birth: {userProfile.dateofbirth}</p>
-          <p>Email: {userProfile.email}</p>
-          <p>Interests: {userProfile.interests}</p>
-          <p>Active: {userProfile.active}</p>
-          <p>Created On: {userProfile.createon}</p>
-          <p>Gender: {userProfile.gender}</p>
-          <p>Profile Description: {userProfile.profile_description}</p>
-          <button onClick={() => handleLike(userProfile.id)}>Like</button>
-          <button onClick={() => handleDislike(userProfile.id)}>Dislike</button>
+      {userProfiles.map((user, index) => (
+        <div key={index}>
+          <UserContainer key={index}>
+            {" "}
+            <Username>{user.username}</Username>
+            <Picture
+              src={`data:image/png;base64,${user.profile_picture}`}
+              alt="{user.profile_picture}"
+            ></Picture>
+            <Details>
+              {" "}
+              <button onClick={() => handleLike(user.userid)}>Like</button>
+              <button onClick={() => handleDislike(user.userid)}>X</button>
+              <h4>UserInfo</h4>
+              {user.firstname}
+              <br />
+              {user.lastname}
+              <br />
+              {user.dateofbirth}
+              <br />
+              {user.email}
+              <br />
+              {user.createon}
+              <br />
+              {user.active}
+              <br />
+              {user.gender}
+              <br />
+            </Details>
+            <MainInfo>
+              <h4 style={{ textAlign: "center" }}>UserInfo</h4>
+              {user.profile_description}
+            </MainInfo>
+            <Interests>
+              <h4 style={{ textAlign: "center" }}>INTEREST</h4>
+              {user.interests}
+            </Interests>
+          </UserContainer>
         </div>
       ))}
     </>
