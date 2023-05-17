@@ -9,27 +9,28 @@ import {
   UserContainer,
 } from "../componets/ProfileStyleLayout";
 import styled from "styled-components";
-
+import { format } from "date-fns";
 interface UserProps {
   username: string;
   firstname: string;
   lastname: string;
-  dateofbirth: string;
   email: string;
   interests: string;
   active: string;
-  createon: string;
+  createdon: string;
   gender: string;
   profile_description: string;
   profile_picture: string;
 }
-
+const createdon = new Date();
+const formattedDate = format(createdon, "dd/MM/yyyy");
 interface Message {
   content: string;
   sender_id: string;
   recipient_id: string;
   sender_username: string;
   recipient_username: string;
+  id: string;
 }
 
 export const UserPage = () => {
@@ -42,7 +43,7 @@ export const UserPage = () => {
     });
 
     axios.get("/api/messages").then((response) => {
-      setMessages(response.data.messages || []);
+      setMessages(response.data.messages);
     });
   }, []);
 
@@ -59,6 +60,16 @@ export const UserPage = () => {
       axios.post("/api/reactivate");
       deactivateButton.textContent = "Deactivate";
       deactivateButton.style.backgroundColor = "green";
+    }
+  };
+  const deleteMessage = (content: string) => {
+    if (content) {
+      axios.delete(`/api/messages/${content}`).then(() => {
+        const updatedMessages = messages.filter(
+          (message) => message.content !== content
+        );
+        setMessages(updatedMessages);
+      });
     }
   };
 
@@ -96,11 +107,10 @@ export const UserPage = () => {
               <br />
               {user.lastname}
               <br />
-              {user.dateofbirth}
+              {formattedDate}
               <br />
               {user.email}
-              <br />
-              {user.createon}
+
               <br />
               {user.active}
               <br />
@@ -132,6 +142,9 @@ export const UserPage = () => {
             <MessageContent>
               <p>{message.content}</p>
             </MessageContent>
+            <button onClick={() => deleteMessage(message.content)}>
+              Delete
+            </button>
           </MessageDialog>
         ))}
       </MessageContainer>

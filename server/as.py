@@ -1,6 +1,6 @@
 import base64
 from datetime import datetime
-from flask import Flask, jsonify, request, session, send_from_directory
+from flask import Flask, jsonify, render_template, request, session, send_from_directory
 import psycopg2
 import os
 import bcrypt
@@ -10,13 +10,14 @@ from psycopg2.extras import RealDictCursor
 
 
 cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
-app = Flask(__name__, static_folder='static', static_url_path='/')
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config["SECRET_KEY"] = 'my_secret_key'
 cache.init_app(app)
 
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    title = 'LOVEFINDERRRZ'
+    return render_template('index.html', title=title)
 
 @app.route('/<path:filename>')
 def static_files(filename):
@@ -330,6 +331,18 @@ def get_messages():
     cursor.close()
 
     return jsonify({"messages": messages})
+
+@app.route('/api/messages/<content>', methods=['DELETE'])
+def delete_message(content):
+    os.environ["DATABASE_URL"] = "postgres://lovefinderrrz_bymf_user:HzaOneZ3gNyLsV7n7PF878JRi2gxibYC@dpg-chavl567avjcvo2u2sog-a.oregon-postgres.render.com/lovefinderrrz_bymf"
+    connect = psycopg2.connect(os.environ["DATABASE_URL"])
+    cursor = connect.cursor()
+    cursor.execute("DELETE FROM messages WHERE content = %s", (content,))
+    connect.commit()
+    cursor.close()
+    connect.close()
+
+    return jsonify({"message": "Message deleted"})
 
 
 @app.route('/api/logout', methods=['POST'])
