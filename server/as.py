@@ -23,6 +23,9 @@ def index():
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)
 
+@app.route('/donation.html')
+def infor():
+    return render_template('donation.html' )
 
 
 @app.route('/api/login', methods=['POST'])
